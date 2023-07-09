@@ -59,7 +59,11 @@ class GDTBot:
         if not loginSuccess:
             print('Failed to log in to Lemmy')
             return
-        self.community_id = self.lem.discover_community(self.SUBREDDIT)        
+        try:
+            self.community_id = self.lem.discover_community(self.SUBREDDIT)
+        except:
+            print(f'Failed to obtain community id for {self.SUBREDDIT}')
+            return
         self.currentlyFeaturedThreadHandle = self.getHandleOnFeaturedThread()
 
         self.getTodaysGames()
@@ -165,6 +169,7 @@ class GDTBot:
                     self.postGameThread()
                     self.changeState(BotState.duringGame)
                 else:
+                    self.updateGameData()
                     self.updatePregameThread()
 
             elif self.state == BotState.duringGame:
@@ -234,14 +239,25 @@ class GDTBot:
         self.currentGame.updateGameData( json.load(response) )
 
     def postThread( self, title, body, featured=True ):
-        posts = self.lem.post.list(community_id=self.community_id)['posts']
+        try:
+            posts = self.lem.post.list(community_id=self.community_id)['posts']
+        except:
+            posts = []
         for post in posts:
             if post['post']['name'] == title:
                 print(f"Thread '{title}' already posted")
                 return post
                 
-        sub = self.lem.post.create(community_id=self.community_id, name=title, body=body, featuredLocal=True)
-        self.lem.post.feature(post_id=sub['post_view']['post']['id'], featured=featured, feature_type='Community' )
+        postSuccess = False
+        while not postSuccess:
+            try:
+                sub = self.lem.post.create(community_id=self.community_id, name=title, body=body, featuredLocal=True)
+                self.lem.post.feature(post_id=sub['post_view']['post']['id'], featured=featured, feature_type='Community' )
+                postSuccess = True
+            except:
+                print(f"Failed to post or feature thread {title}\nTrying again in 20 seconds...")
+                time.sleep(20)
+
         return sub['post_view']
 
 
@@ -249,18 +265,27 @@ class GDTBot:
         if not handle:
             handle = self.getHandleOnFeaturedThread()
         if handle:
-            self.lem.post.edit(post_id = handle['post']['id'], body=body)
+            try:
+                self.lem.post.edit(post_id = handle['post']['id'], body=body)
+            except:
+                print("Failed to update thread, try again on next iteration")
         else:
             print("Could not update thread, no featured post on Lemmy")
         
     def unfeatureThread( self, handle ):
         # check, just in case the bot is restarted and it doesn't have the handle
         if handle:
-            self.lem.post.feature(post_id=handle['post']['id'], featured=False, feature_type='Community' )
+            try:
+                self.lem.post.feature(post_id=handle['post']['id'], featured=False, feature_type='Community' )
+            except:
+                print(f'Failed to unfeature thread {handle["post"]["name"]}')
 
     def getHandleOnFeaturedThread( self ):
         featuredThread = None
-        posts = self.lem.post.list(community_id=self.community_id)['posts']
+        try:
+            posts = self.lem.post.list(community_id=self.community_id)['posts']
+        except:
+            return None
         for post in posts:
             if post['post']['featured_community']:
                 featuredThread = post
