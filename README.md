@@ -1,14 +1,16 @@
-Baseball GDT Bot
+GDTBot4Lemmy
 =====================================
 
 ### Current Version: 5.0.0
 
-The point of this project is to create a bot that will generate a
-	game discussion thread that contains live linescore and boxscore,
-	post it in the correct Lemmy forum for that team, and keep it
-	updated throughout the game.
+This is a fork of https://github.com/mattabullock/Baseball-GDT-Bot
 
-Version 5 is a fork from 4 altered to work on Lemmy rather than Reddit,
+This is a bot for Lemmy that creates Major League Baseball game day threads,
+game threads, postgame threads, and an off-day threads.
+Pregame and Game threads are updated periodically, and all stats are pulled
+from MLB's (free, generous) API.
+
+Version 5 is a fork from 4, altered to work on Lemmy rather than Reddit,
 and with a completely rewritten main.py. Version 5 is also in Python 3.
 
 
@@ -57,10 +59,6 @@ As of 5.0 most of these settings ARE NOT used.
 ---
 
 If something doesn't seem right, feel free to message me or post it as a bug here.
-
-This was written in Python 2.7, so beware if you are running Python 3 or
-	above that it may not work correctly. Also make sure you install
-	praw and simplejson before running!
 
 Modules being used:
 
