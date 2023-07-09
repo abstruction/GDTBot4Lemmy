@@ -206,7 +206,7 @@ class GDTBot:
         print(f'> {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} Changing state from {self.state} to {newState}')
 
         if newState == BotState.waitingForPregame:
-            print(f"Waiting to post pregame thread at {self.PRE_GAME_TIME}...")
+            print(f"Waiting to post pregame thread at {self.PRE_THREAD_TIME}...")
             self.state = newState
     
         elif newState == BotState.waitingForGametime:
