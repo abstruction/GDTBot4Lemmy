@@ -84,7 +84,7 @@ class MarkdownGenerator:
         if threadType == "pre": title = "[GAMEDAY THREAD] "
         elif threadType == "game": title = "[GAME THREAD] "
         elif threadType == "post": title = "[POSTGAME THREAD] "
-        else: title = "[UH OH]"
+        else: title = "[UH OH] "
 
         gameData = game.gameData['gameData']
         timeData = gameData["datetime"]
@@ -132,8 +132,8 @@ class MarkdownGenerator:
         try:
             homeTeamName = gameData["gameData"]["teams"]["home"]["teamName"]
             awayTeamName = gameData["gameData"]["teams"]["away"]["teamName"]
-            homeSub = self.options[homeTeamName]["sub"]
-            awaySub = self.options[awayTeamName]["sub"]
+            #homeSub = self.options[homeTeamName]["sub"]
+            #awaySub = self.options[awayTeamName]["sub"]
 
             homePitcherID = str(gameData["gameData"]["probablePitchers"]["home"]["id"])
             awayPitcherID = str(gameData["gameData"]["probablePitchers"]["away"]["id"])
@@ -151,8 +151,10 @@ class MarkdownGenerator:
 
             probables  = "| |Starting Pitcher|Report\n"
             probables += "|-|-|-|\n"
-            probables += "[" + awayTeamName + "](" + awaySub + ")|" + awayPitcher + "| No report posted" + "\n"
-            probables += "[" + homeTeamName + "](" + homeSub + ")|" + homePitcher + "| No report posted" + "\n"
+            # probables += "[" + awayTeamName + "](" + awaySub + ")|" + awayPitcher + "| No report posted" + "\n"
+            probables += awayTeamName + "|" + awayPitcher + "| No report posted" + "\n"
+            # probables += "[" + homeTeamName + "](" + homeSub + ")|" + homePitcher + "| No report posted" + "\n"
+            probables += homeTeamName + "|" + homePitcher + "| No report posted" + "\n"
 
             probables += "\n\n"
 
@@ -476,7 +478,7 @@ class MarkdownGenerator:
             highlightMarkdown += "|:--|:--|:--|:--|\n"
             for highlight in highlights:
                 try:
-                    highlightMarkdown += "|" + Editor.options[highlight["kicker"].replace("Highlights ", "").replace("Top Play ", "")]["tag"]
+                    highlightMarkdown += "|" + MarkdownGenerator.options[highlight["kicker"].replace("Highlights ", "").replace("Top Play ", "")]["tag"]
                 except:
                     highlightMarkdown += "|[](/MLB)"
                 SDHighlightURL = ""
