@@ -20,7 +20,6 @@ and with a completely rewritten main.py. Version 5 is also in Python 3.
 ### Configuration
 
 To use the default settings, copy `sample_settings.json` into `src/settings.json`.
-As of 5.0 most of these settings ARE NOT used.
 
 #### Descriptions of Settings
 
