@@ -24,37 +24,23 @@ As of 5.0 most of these settings ARE NOT used.
 
 #### Descriptions of Settings
 
-* `BOT_TIME_ZONE` - time zone of the computer running the bot, uncomment the line that you want to use
+* `LEMMY_INSTANCE` - which Lemmy site you're posting to
 
-* `TIME_ZONE` - time zone of the team. uncomment the line that you want to use
+* `CLIENT_ID` - username
 
-* `POST_TIME` - bot posts the thread POST_TIME hours before the game
+* `CLIENT_SECRET` - password
 
-* `SUBREDDIT` - subreddit that you want the threads posted to
+* `SUBREDDIT` - lemmy subforum that you want the threads posted to
 
-* `TEAM_CODE` - three letter code that represents team, look this up
-
-* `OFFDAY_THREAD` - do you want an offday discussion thread?
-
-* `PREGAME_THREAD` - do you want a pre game thread?
-
-* `POST_GAME_THREAD` - do you want a post game thread?
-
-* `SUGGESTED_SORT` - what do you want the suggested sort to be? ("confidence", "top", "new", "controversial", "old", "random", "qa", "")
-
-* `STICKY` - do you want the thread stickied? (mod only)
-
-* `MESSAGE` - send submission shortlink to /u/baseballbot
-
-* `INBOXREPLIES` - do you want to receive thread replies in the bot's inbox?
-
-* `OFFDAY_THREAD_SETTINGS` - what to include in the offday threads
+* `TEAM_CODE` - three letter code that represents team, look this ./src/team IDs.txt
 
 * `PRE_THREAD_SETTINGS` - what to include in the pregame threads
 
-* `THREAD_SETTINGS` - what to include in game threads, example footer: "**Remember to sort by new to keep up!**"
+* `PRE_THREAD_TIME` - hour (in 24 hour format) at which pregame thread is posted
 
-* `POST_THREAD_SETTINGS` - what to include in postgame threads, example footer: "**Remember to sort by new to keep up!**"
+* `PRE_THREAD_UPDATE_PERIOD_SECONDS` - number of seconds between pregame thread updates
+
+* `GAME_THREAD_UPDATE_PERIOD_SECONDS` - number of seconds between game thread updates
 
 ---
 
