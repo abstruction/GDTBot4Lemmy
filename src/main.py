@@ -125,6 +125,11 @@ class GDTBot:
                 print("Failed to access stats API or bad json from API, trying again in 20 seconds...")
                 time.sleep(20)
 
+        if schedule['totalGames'] == 0:
+            self.todaysGames = []
+            self.currentGame = None
+            return
+        
         todaysGames = schedule["dates"][0]["games"]
         teamsGames = []
         for game in todaysGames:
@@ -338,7 +343,9 @@ class GDTBot:
         self.currentlyFeaturedThreadHandle = self.postThread( title, body )
 
     def postOffDayThread( self ):
-        print('generate and post OFF DAY thread here')        
+        print('generate and post OFF DAY thread here')
+        timeString = datetime.now().strftime("%m/%d/%Y")
+        self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {timeString}", "Talk amongst yourselves.")
 
 
 if __name__ == '__main__':
