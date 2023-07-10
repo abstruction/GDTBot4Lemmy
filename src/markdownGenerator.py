@@ -1,12 +1,13 @@
 #Generates markdown for threads
 #import player
 
-import xml.etree.ElementTree as ET
-import urllib.request, urllib.error, urllib.parse
-import simplejson as json
+#import xml.etree.ElementTree as ET
+#import urllib.request, urllib.error, urllib.parse
+#import simplejson as json
 from datetime import datetime, timedelta
 import time
 import player
+import generateDivisionStandings
 
 class MarkdownGenerator:
 
@@ -114,8 +115,8 @@ class MarkdownGenerator:
         #print("Returning title " + title)
         return title
 
-    def generatePreMarkdown(self, games):
-        markdown = ""
+    def generatePreMarkdown(self, games, divisionCode):
+        markdown = generateDivisionStandings(divisionCode)
         for g in games:
             markdown += self.generateHeader( g.gameData, g.mediaData )
             #markdown += self.generatePreFirstPitch( g.gameData )
@@ -547,6 +548,9 @@ class MarkdownGenerator:
         # except:
             # print "Missing data for decisions, returning blank text..."
             # return decisions
+
+    def generateDivisionStandings( self, divisionCode ):
+        return generateDivisionStandings.generateDivisionStandings( divisionCode )
 
     def generateStatus(self, data):
         #print('generating status')

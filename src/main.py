@@ -6,11 +6,11 @@ import time
 from datetime import datetime, timedelta
 import urllib.request, urllib.error, urllib.parse
 import simplejson as json
-#from lemmy import Lemmy
 import jplaw
 import os
 
 import markdownGenerator
+
 
 class Game:
     def __init__( self, gameData, mediaData={}, liveFeedURL="" ):
@@ -104,6 +104,7 @@ class GDTBot:
             self.CLIENT_SECRET = settings.get('CLIENT_SECRET')
             self.SUBREDDIT = settings.get('SUBREDDIT')
             self.TEAM_CODE = settings.get('TEAM_CODE')
+            self.DIVISION_CODE = settings.get('DIVISION_CODE')
             self.PRE_THREAD_TIME = settings.get('PRE_THREAD_SETTINGS').get('PRE_THREAD_TIME')
             self.PREGAME_THREAD_UPDATE_PERIOD_SECONDS = settings.get('PRE_THREAD_SETTINGS').get('PRE_THREAD_UPDATE_PERIOD_SECONDS')
             self.GAME_THREAD_UPDATE_PERIOD_SECONDS = settings.get("THREAD_SETTINGS").get("GAME_THREAD_UPDATE_PERIOD_SECONDS")
@@ -136,8 +137,8 @@ class GDTBot:
         todaysGames = schedule["dates"][0]["games"]
         teamsGames = []
         for game in todaysGames:
-            if game["teams"]["away"]["team"]["id"] == int(self.TEAM_CODE)\
-            or game["teams"]["home"]["team"]["id"] == int(self.TEAM_CODE):
+            if game["teams"]["away"]["team"]["id"] == self.TEAM_CODE\
+            or game["teams"]["home"]["team"]["id"] == self.TEAM_CODE:
                 teamsGames.append( (baseURL + game['link'], f'{baseURL}/api/v1/game/{game["gamePk"]}/content') )
 
         if teamsGames:
@@ -310,13 +311,13 @@ class GDTBot:
             print('Pregame thread already posted')
             self.currentlyFeaturedThreadHandle = ft
             return
-        body = self.mg.generatePreMarkdown( self.todaysGames )
+        body = self.mg.generatePreMarkdown( self.todaysGames, self.DIVISION_CODE )
         self.unfeatureThread( self.currentlyFeaturedThreadHandle )
         self.currentlyFeaturedThreadHandle = self.postThread( title, body )
 
     def updatePregameThread( self ):
         timeString = datetime.now().strftime("^%Y-%m-%d^ ^%H:%M:%S^")
-        body = self.mg.generatePreMarkdown( self.todaysGames )
+        body = self.mg.generatePreMarkdown( self.todaysGames, self.DIVISION_CODE )
         body += f"\n\n^Last^ ^updated^ {timeString}"
         self.updateThread( self.currentlyFeaturedThreadHandle, body )
 
@@ -350,8 +351,8 @@ class GDTBot:
     def postOffDayThread( self ):
         print('generate and post OFF DAY thread here')
         self.unfeatureThread( self.currentlyFeaturedThreadHandle )        
-        timeString = datetime.now().strftime("%m/%d/%Y")
-        self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {timeString}", "Talk amongst yourselves.")
+        dateString = datetime.now().strftime("%m/%d/%Y")
+        self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {dateString}", "Talk amongst yourselves.")
 
 
 if __name__ == '__main__':

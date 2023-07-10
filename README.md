@@ -19,7 +19,8 @@ and with a completely rewritten main.py. Version 5 is also in Python 3.
 
 ### Configuration
 
-To use the default settings, copy `sample_settings.json` into `src/settings.json`.
+To use, copy `sample_settings.json` into `src/settings.json` and configure
+settings as detailed below:
 
 #### Descriptions of Settings
 
@@ -31,7 +32,9 @@ To use the default settings, copy `sample_settings.json` into `src/settings.json
 
 * `SUBREDDIT` - lemmy subforum that you want the threads posted to
 
-* `TEAM_CODE` - three letter code that represents team, look this ./src/team IDs.txt
+* `TEAM_CODE` - three digit code that represents team, look for this ./src/team IDs.txt
+
+* `DIVISION_CODE` - three digit code for the team's division, look for this ./src/team IDs.txt
 
 * `PRE_THREAD_SETTINGS` - what to include in the pregame threads
 
@@ -47,7 +50,8 @@ If something doesn't seem right, feel free to message me or post it as a bug her
 
 Modules being used:
 
-	Lemmy - interfacing Lemmy, modified to allow post editing and stickying
+	jplaw - API interface for Lemmy
+	MLB-StatsAPI - API interface for MLB stats
 	simplejson - JSON parsing
 	urllib - pulling data from MLB servers
 
