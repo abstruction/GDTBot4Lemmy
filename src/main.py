@@ -6,7 +6,8 @@ import time
 from datetime import datetime, timedelta
 import urllib.request, urllib.error, urllib.parse
 import simplejson as json
-from lemmy import Lemmy
+#from lemmy import Lemmy
+import jplaw
 import os
 
 import markdownGenerator
@@ -54,14 +55,16 @@ class GDTBot:
         
         self.readSettings()
         
-        self.lem = Lemmy(self.LEMMY_INSTANCE)
-        loginSuccess = self.lem.log_in(self.CLIENT_ID, self.CLIENT_SECRET)
-        if not loginSuccess:
-            print('Failed to log in to Lemmy')
+        try:
+            self.lem = jplaw.Lemmy(self.LEMMY_INSTANCE, self.CLIENT_ID, self.CLIENT_SECRET)
+        except Exception as e:
+            print(e)
+            print(f"Failed to log in to {self.LEMMY_INSTANCE}")
             return
         try:
-            self.community_id = self.lem.discover_community(self.SUBREDDIT)
-        except:
+            self.community_id = self.lem.Community.get(self.SUBREDDIT)['community']['id']
+        except Exception as e:
+            print(e)
             print(f'Failed to obtain community id for {self.SUBREDDIT}')
             return
         self.currentlyFeaturedThreadHandle = self.getHandleOnFeaturedThread()
@@ -245,25 +248,26 @@ class GDTBot:
 
     def postThread( self, title, body, featured=True ):
         try:
-            posts = self.lem.post.list(community_id=self.community_id)['posts']
+            posts = self.lem.Post.list(community_id=self.community_id)
         except:
             posts = []
         for post in posts:
             if post['post']['name'] == title:
                 print(f"Thread '{title}' already posted")
                 return post
-                
+
         postSuccess = False
         while not postSuccess:
             try:
-                sub = self.lem.post.create(community_id=self.community_id, name=title, body=body, featuredLocal=True)
-                self.lem.post.feature(post_id=sub['post_view']['post']['id'], featured=featured, feature_type='Community' )
+                sub = self.lem.Post.create(community_id=self.community_id, title=title, body=body)
+                self.lem.Post.feature(post_id=sub['post']['id'], featured=True, feature_type=jplaw.types.PostFeatureType.Community )
                 postSuccess = True
-            except:
-                print(f"Failed to post or feature thread {title}\nTrying again in 20 seconds...")
+            except Exception as e:
+                print(e)
+                print(f"Failed to post or feature thread {title}\nTrying again in 20 seconds...\n")
                 time.sleep(20)
 
-        return sub['post_view']
+        return sub
 
 
     def updateThread( self, handle, body ):
@@ -271,7 +275,7 @@ class GDTBot:
             handle = self.getHandleOnFeaturedThread()
         if handle:
             try:
-                self.lem.post.edit(post_id = handle['post']['id'], body=body)
+                self.lem.Post.edit(post_id = handle['post']['id'], body=body)
             except:
                 print("Failed to update thread, try again on next iteration")
         else:
@@ -281,20 +285,21 @@ class GDTBot:
         # check, just in case the bot is restarted and it doesn't have the handle
         if handle:
             try:
-                self.lem.post.feature(post_id=handle['post']['id'], featured=False, feature_type='Community' )
+                self.lem.Post.feature(post_id=handle['post']['id'], featured=False, feature_type=jplaw.types.PostFeatureType.Community )
             except:
                 print(f'Failed to unfeature thread {handle["post"]["name"]}')
 
     def getHandleOnFeaturedThread( self ):
-        featuredThread = None
         try:
-            posts = self.lem.post.list(community_id=self.community_id)['posts']
+            posts = self.lem.Post.list(community_id=self.community_id)
         except:
             return None
+            
         for post in posts:
-            if post['post']['featured_community']:
-                featuredThread = post
-        return featuredThread
+            if post['post']['featured_community'] and 'THREAD]' in post['post']['name']:
+                return post
+        return None
+
         
     def postPregameThread( self ):
         print('generate and post PRE thread here')
