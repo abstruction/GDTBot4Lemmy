@@ -349,6 +349,7 @@ class GDTBot:
 
     def postOffDayThread( self ):
         print('generate and post OFF DAY thread here')
+        self.unfeatureThread( self.currentlyFeaturedThreadHandle )        
         timeString = datetime.now().strftime("%m/%d/%Y")
         self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {timeString}", "Talk amongst yourselves.")
 
