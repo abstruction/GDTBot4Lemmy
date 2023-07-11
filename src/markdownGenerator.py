@@ -117,7 +117,7 @@ class MarkdownGenerator:
         return title
 
     def generatePreMarkdown( self, games ):
-        markdown = generateDivisionStandings(self.divisionCode)
+        markdown = generateDivisionStandings(self.division_code)
         for g in games:
             markdown += self.generateHeader( g.gameData, g.mediaData )
             #markdown += self.generatePreFirstPitch( g.gameData )
@@ -551,7 +551,7 @@ class MarkdownGenerator:
             # return decisions
 
     def generateDivisionStandings( self ):
-        return generateDivisionStandings.generateDivisionStandings( self.divisionCode )
+        return generateDivisionStandings.generateDivisionStandings( self.division_code )
 
     def generateOffDayMarkdown( self ):
         body = generateDivisionStandings.generateDivisionStandings()
