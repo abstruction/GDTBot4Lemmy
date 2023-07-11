@@ -12,9 +12,7 @@ def generateDivisionStandings( divisionCode=201 ):
     table += "|Rank|Team|W|L|GB|\n"
     table += ":--|:--|:--|:--|:--|\n"
     for team in standings['teams']:
-        # table += "|".join((team['div_rank'], team['name'], team['w'], team['l'], team['gb']))
         table += "|".join( [str(team[i]) for i in ('div_rank', 'name', 'w', 'l', 'gb')] )
         # table += f"{team['div_rank']}|{team['name']}|{team['w']}|{team['l']}|{team['gb']}"
         table += '\n'
     return table
-    
