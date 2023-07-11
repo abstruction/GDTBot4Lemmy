@@ -51,9 +51,10 @@ class GDTBot:
         self.pregameTime = datetime(now.year, now.month, now.day, 9)
         self.todaysGames = []
         self.currentGame = None
-        self.mg = markdownGenerator.MarkdownGenerator()
-        
+
         self.readSettings()
+        
+        self.mg = markdownGenerator.MarkdownGenerator( division_code=self.DIVISION_CODE )        
         
         try:
             self.lem = jplaw.Lemmy(self.LEMMY_INSTANCE, self.CLIENT_ID, self.CLIENT_SECRET)
@@ -311,13 +312,13 @@ class GDTBot:
             print('Pregame thread already posted')
             self.currentlyFeaturedThreadHandle = ft
             return
-        body = self.mg.generatePreMarkdown( self.todaysGames, self.DIVISION_CODE )
+        body = self.mg.generatePreMarkdown( self.todaysGames )
         self.unfeatureThread( self.currentlyFeaturedThreadHandle )
         self.currentlyFeaturedThreadHandle = self.postThread( title, body )
 
     def updatePregameThread( self ):
         timeString = datetime.now().strftime("^%Y-%m-%d^ ^%H:%M:%S^")
-        body = self.mg.generatePreMarkdown( self.todaysGames, self.DIVISION_CODE )
+        body = self.mg.generatePreMarkdown( self.todaysGames )
         body += f"\n\n^Last^ ^updated^ {timeString}"
         self.updateThread( self.currentlyFeaturedThreadHandle, body )
 
@@ -350,7 +351,7 @@ class GDTBot:
 
     def postOffDayThread( self ):
         print('generate and post OFF DAY thread')
-        body = self.mg.generateOffDayMarkdown( self.DIVISION_CODE )
+        body = self.mg.generateOffDayMarkdown()
         self.unfeatureThread( self.currentlyFeaturedThreadHandle )        
         dateString = datetime.now().strftime("%m/%d/%Y")
         self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {dateString}", body )

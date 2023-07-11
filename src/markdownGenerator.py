@@ -62,10 +62,11 @@ class MarkdownGenerator:
 ##             self.post_highlights, self.post_footer)
 ##        ) = post_thread_settings
 
-    def __init__( self ):
+    def __init__( self, division_code=201, time_zone='ET' ):
         self.pre_probables = True
         self.time_change = 0
-        self.time_zone = 'ET'
+        self.time_zone = time_zone
+        self.division_code = division_code
         self.header = True
         self.box_score = True
         self.line_score = True
@@ -115,8 +116,8 @@ class MarkdownGenerator:
         #print("Returning title " + title)
         return title
 
-    def generatePreMarkdown(self, games, divisionCode):
-        markdown = generateDivisionStandings(divisionCode)
+    def generatePreMarkdown( self, games ):
+        markdown = generateDivisionStandings(self.divisionCode)
         for g in games:
             markdown += self.generateHeader( g.gameData, g.mediaData )
             #markdown += self.generatePreFirstPitch( g.gameData )
@@ -549,11 +550,11 @@ class MarkdownGenerator:
             # print "Missing data for decisions, returning blank text..."
             # return decisions
 
-    def generateDivisionStandings( self, divisionCode ):
-        return generateDivisionStandings.generateDivisionStandings( divisionCode )
+    def generateDivisionStandings( self ):
+        return generateDivisionStandings.generateDivisionStandings( self.divisionCode )
 
-    def generateOffDayMarkdown( self, divisionCode ):
-        body = generateDivisionStandings.generateDivisionStandings( divisionCode )
+    def generateOffDayMarkdown( self ):
+        body = generateDivisionStandings.generateDivisionStandings()
         body += "\n\nTalk amongst yourselves."
         return body
         
