@@ -1,4 +1,5 @@
 import statsapi
+from datetime import datetime
 
 def generateDivisionStandings( divisionCode=201 ):
     try:
@@ -8,11 +9,12 @@ def generateDivisionStandings( divisionCode=201 ):
         return ""
         
     standings = standingsData[divisionCode]
-    table = f"{standings['div_name']} Standings\n\n"
+    timeString = datetime.now().strftime("%m/%d/%Y %H:%M")
+    table  = f"{standings['div_name']} Standings\n"
+    table += f"as of {timeString}\n\n"
     table += "|Rank|Team|W|L|GB|\n"
     table += ":--|:--|:--|:--|:--|\n"
     for team in standings['teams']:
         table += "|".join( [str(team[i]) for i in ('div_rank', 'name', 'w', 'l', 'gb')] )
-        # table += f"{team['div_rank']}|{team['name']}|{team['w']}|{team['l']}|{team['gb']}"
         table += '\n'
     return table

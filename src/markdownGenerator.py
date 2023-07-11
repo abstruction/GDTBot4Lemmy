@@ -552,6 +552,12 @@ class MarkdownGenerator:
     def generateDivisionStandings( self, divisionCode ):
         return generateDivisionStandings.generateDivisionStandings( divisionCode )
 
+    def generateOffDayMarkdown( self, divisionCode ):
+        body = generateDivisionStandings.generateDivisionStandings( divisionCode )
+        body += "\n\nTalk amongst yourselves."
+        return body
+        
+
     def generateStatus(self, data):
         #print('generating status')
         #print("Entering editor.generate_status")

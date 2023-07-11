@@ -349,10 +349,11 @@ class GDTBot:
         self.currentlyFeaturedThreadHandle = self.postThread( title, body )
 
     def postOffDayThread( self ):
-        print('generate and post OFF DAY thread here')
+        print('generate and post OFF DAY thread')
+        body = self.mg.generateOffDayMarkdown( self.DIVISION_CODE )
         self.unfeatureThread( self.currentlyFeaturedThreadHandle )        
         dateString = datetime.now().strftime("%m/%d/%Y")
-        self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {dateString}", "Talk amongst yourselves.")
+        self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {dateString}", body )
 
 
 if __name__ == '__main__':
