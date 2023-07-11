@@ -5,7 +5,7 @@
 #import urllib.request, urllib.error, urllib.parse
 #import simplejson as json
 from datetime import datetime, timedelta
-import time
+#import time
 import player
 import generateDivisionStandings
 
@@ -99,7 +99,7 @@ class MarkdownGenerator:
         awayTeamName = gameData["teams"]["away"]["name"] if isinstance(gameData["teams"]["away"]["name"], str) else gameData["teams"]["away"]["name"]["full"]
         homeTeamName = gameData["teams"]["home"]["name"] if isinstance(gameData["teams"]["home"]["name"], str) else gameData["teams"]["home"]["name"]["full"]
         
-        if threadType == 'pre' or threadType == 'game':
+        if threadType in ('pre', 'game'):
             title += awayTeamName + " (" + str(gameData["teams"]["away"]["record"]["wins"]) + "-" + str(gameData["teams"]["away"]["record"]["losses"]) + ")"
             title += " @ "
             title += homeTeamName + " (" + str(gameData["teams"]["home"]["record"]["wins"]) + "-" + str(gameData["teams"]["home"]["record"]["losses"]) + ")"
@@ -117,18 +117,18 @@ class MarkdownGenerator:
         return title
 
     def generatePreMarkdown( self, games ):
-        markdown = generateDivisionStandings(self.division_code)
+        markdown = generateDivisionStandings.generateDivisionStandings(self.division_code)
         for g in games:
             markdown += self.generateHeader( g.gameData, g.mediaData )
             #markdown += self.generatePreFirstPitch( g.gameData )
             if self.pre_probables:
-                markdown += self.generatePreProbables(g.gameData, g.mediaData)
+                markdown += self.generatePreProbables(g.gameData)
             #if self.pre_first_pitch: markdown += self.generate_pre_first_pitch(gameData)
             markdown += "\n\n"
         # print("Returning all markdown")
         return markdown
 
-    def generatePreProbables(self, gameData, mediaData):
+    def generatePreProbables(self, gameData):
         #print("generating pregame probables")
         probables = ""
         try:
@@ -226,11 +226,11 @@ class MarkdownGenerator:
         header = ""
         # try:
         gameData = data["gameData"]
-        game = gameData["game"]
+        #game = gameData["game"]
         timeData = gameData["datetime"]
         weather = gameData["weather"]
         # print(weather.keys())
-        teams = gameData["teams"]
+        #teams = gameData["teams"]
         videoBroadcast = mediaData["media"]["epg"][0]
         audioBroadcast = mediaData["media"]["epg"][2]
 
@@ -411,10 +411,10 @@ class MarkdownGenerator:
        # Table headers
         linescore += "Linescore|"
         for i in range(1, numInnings + 1):
-           linescore += str(i) + "|"
+            linescore += str(i) + "|"
         linescore += "R|H|E\n"
         for i in range(0, numInnings + 4):
-           linescore += ":--|"
+            linescore += ":--|"
 
         # Away team linescore
         linescore += "\n" + awayTeamName + "|"
@@ -503,8 +503,8 @@ class MarkdownGenerator:
         #print('generating decisions...')
         decisions = ""
         # try:
-        homepitchers = []
-        awaypitchers = []
+        #homepitchers = []
+        #awaypitchers = []
         decisionsData = data["liveData"]["decisions"]#["pitchers"]
         liveDataTeams = data["liveData"]["boxscore"]["teams"]
         gameDataTeams = data["gameData"]["teams"]
@@ -571,22 +571,22 @@ class MarkdownGenerator:
         homeTeamName = data["gameData"]["teams"]["home"]["abbreviation"]
         awayTeamName = data["gameData"]["teams"]["away"]["abbreviation"]
 
-        if gameStatus == "Game Over" or gameStatus == "Final":
+        if gameStatus in ("Game Over", "Final"):
             status += "## FINAL: "
             if int(homeTeamRuns) < int(awayTeamRuns):
                 status += awayTeamRuns + "-" + homeTeamRuns + " " + awayTeamName + "\n\n"
                 status += self.generateDecisions(data)
                 #print("Returning status")
-                return status
+                # return status
             elif int(homeTeamRuns) > int(awayTeamRuns):
                 status += homeTeamRuns + "-" + awayTeamRuns + " " + homeTeamName + "\n\n"
                 status += self.generateDecisions(data)
                 #print("Returning status")
-                return status
+                # return status
             elif int(homeTeamRuns) == int(awayTeamRuns):
                 status += "TIE"
                 #print(f"Returning status {status}")
-                return status
+                # return status
             
         elif gameStatus == "Completed Early":
             status += "## COMPLETED EARLY: "
@@ -594,32 +594,33 @@ class MarkdownGenerator:
                 status += awayTeamRuns + "-" + homeTeamRuns + " " + awayTeamName + "\n\n"
                 status += self.generateDecisions(data)
                 #print(f"Returning status {status}")
-                return status
+                # return status
             elif int(homeTeamRuns) > int(awayTeamRuns):
                 status += homeTeamRuns + "-" + awayTeamRuns + " " + homeTeamName + "\n\n"
                 status += self.generateDecisions(data)
                 #print(f"Returning status {status}")
-                return status
+                # return status
             elif int(homeTeamRuns) == int(awayTeamRuns):
                 status += "TIE"
                 #print(f"Returning status {status}")
-                return status
+                # return status
             
         elif gameStatus == "Postponed":
             status += "## POSTPONED\n\n"
             #print(f"Returning status {status}")
-            return status
+            # return status
         elif gameStatus == "Suspended":
             status += "## SUSPENDED\n\n"
             #print(f"Returning status {status}")
-            return status
+            # return status
         elif gameStatus == "Cancelled":
             status += "## CANCELLED\n\n"
             #print(f"Returning status {status}")
-            return status
+            # return status
         else:
             #print("Status not final or postponed, returning empty string")
             return ""
+        return status
         # except:
             # print "Missing data for status, returning blank text..."
             # return status
