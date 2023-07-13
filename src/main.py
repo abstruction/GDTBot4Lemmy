@@ -13,7 +13,7 @@ import markdownGenerator
 
 
 class Game:
-    def __init__( self, gameData, mediaData={}, liveFeedURL="" ):
+    def __init__( self, gameData, mediaData, liveFeedURL="" ):
         self.gameData = gameData
         self.mediaData = mediaData
         self.liveFeedURL = liveFeedURL
@@ -156,7 +156,7 @@ class GDTBot:
 
 
 #event: ---4am-------self.PRE_THREAD_TIMEam--------game time----------game ends---
-#state:     w4pregame   w4gametime       duringGame       w4tomorrow
+#state:     w4pregame                      w4gametime       duringGame       w4tomorrow
 
     def mainLoop( self ):
 
@@ -262,7 +262,8 @@ class GDTBot:
         while not postSuccess:
             try:
                 sub = self.lem.Post.create(community_id=self.community_id, title=title, body=body)
-                self.lem.Post.feature(post_id=sub['post']['id'], featured=True, feature_type=jplaw.types.PostFeatureType.Community )
+                self.lem.Post.feature(post_id=sub['post']['id'], featured=featured, feature_type=jplaw.types.PostFeatureType.Community )
+                print(f"Posted thread\n{title}")
                 postSuccess = True
             except Exception as e:
                 print(e)
@@ -304,9 +305,6 @@ class GDTBot:
 
         
     def postPregameThread( self ):
-        print('generate and post PRE thread here')
-        title = self.mg.generateTitle(self.currentGame, 'pre')
-        print(f'{title}')
         ft = self.getHandleOnFeaturedThread()
         if ft and ft['post']['name'] == title:
             print('Pregame thread already posted')
@@ -323,9 +321,7 @@ class GDTBot:
         self.updateThread( self.currentlyFeaturedThreadHandle, body )
 
     def postGameThread( self ):
-        print('generate and post GAME thread here')
         title = self.mg.generateTitle( self.currentGame, 'game' )
-        print(title)
         ft = self.getHandleOnFeaturedThread()
         if ft and ft['post']['name'] == title:
             print('Game thread already posted')
@@ -342,19 +338,17 @@ class GDTBot:
         self.updateThread( self.currentlyFeaturedThreadHandle, body )
 
     def postPostgameThread( self ):
-        self.unfeatureThread( self.currentlyFeaturedThreadHandle )
-        print('Generating POSTGAME thread')
         title = self.mg.generateTitle( self.currentGame, 'post' )
         body = self.mg.generateBodyMarkdown( self.currentGame, 'post' )
-        print(f"Posting POSTGAME thread...\n{title}")
+        self.unfeatureThread( self.currentlyFeaturedThreadHandle )
         self.currentlyFeaturedThreadHandle = self.postThread( title, body )
 
     def postOffDayThread( self ):
-        print('generate and post OFF DAY thread')
         body = self.mg.generateOffDayMarkdown()
-        self.unfeatureThread( self.currentlyFeaturedThreadHandle )        
         dateString = datetime.now().strftime("%m/%d/%Y")
-        self.currentlyFeaturedThreadHandle = self.postThread( f"[OFF DAY THREAD] {dateString}", body )
+        title = f"[OFF DAY THREAD] {dateString}"
+        self.unfeatureThread( self.currentlyFeaturedThreadHandle )        
+        self.currentlyFeaturedThreadHandle = self.postThread( title, body )
 
 
 if __name__ == '__main__':
