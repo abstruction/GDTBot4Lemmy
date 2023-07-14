@@ -13,7 +13,7 @@ import markdownGenerator
 
 
 class Game:
-    def __init__( self, gameData, mediaData, liveFeedURL="" ):
+    def __init__( self, gameData, mediaData, liveFeedURL ):
         self.gameData = gameData
         self.mediaData = mediaData
         self.liveFeedURL = liveFeedURL
@@ -149,7 +149,7 @@ class GDTBot:
                 gameData = json.load(response)
                 response = urllib.request.urlopen(mediaURL)
                 mediaData = json.load(response)
-                self.todaysGames.append(Game(gameData, mediaData, gameURL))
+                self.todaysGames.append( Game(gameData, mediaData, gameURL) )
                 if len(teamsGames) > 1: time.sleep(5)
             self.todaysGames.sort(key = lambda g: g.startTime)
             self.currentGame = self.todaysGames[0]
