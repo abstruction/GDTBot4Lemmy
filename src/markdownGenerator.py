@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 #import time
 import player
 import generateDivisionStandings
+import generateLineups
 
 class MarkdownGenerator:
 
@@ -118,11 +119,13 @@ class MarkdownGenerator:
 
     def generatePreMarkdown( self, games ):
         markdown = generateDivisionStandings.generateDivisionStandings(self.division_code)
+        #markdown ++ "\n\n"
         for g in games:
             markdown += self.generateHeader( g.gameData, g.mediaData )
             #markdown += self.generatePreFirstPitch( g.gameData )
             if self.pre_probables:
                 markdown += self.generatePreProbables(g.gameData)
+            markdown += generateLineups.generateLineups(g.gameData['gameData']['game']['pk'])
             #if self.pre_first_pitch: markdown += self.generate_pre_first_pitch(gameData)
             markdown += "\n\n"
         # print("Returning all markdown")
