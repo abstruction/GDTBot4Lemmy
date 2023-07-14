@@ -17,4 +17,4 @@ def generateDivisionStandings( divisionCode=201 ):
     for team in standings['teams']:
         table += "|".join( [str(team[i]) for i in ('div_rank', 'name', 'w', 'l', 'gb')] )
         table += '\n'
-    return table
+    return table + '\n\n'
