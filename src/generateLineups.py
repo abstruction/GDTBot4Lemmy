@@ -1,6 +1,6 @@
 import statsapi
 
-def generateLineups( gamePk=717417 ):
+def generateLineups( gamePk ):
     
     data = statsapi.boxscore_data(gamePk)
     markdown = ""
@@ -11,8 +11,7 @@ def generateLineups( gamePk=717417 ):
         if BOids:
             
             markdown += "Name|avg.|OPS|HR|RBI\n"
-            markdown += ':--|' * 5
-            markdown += '\n'
+            markdown += ":--|--:|--:|--:|--:|\n"
    
             players = data[team]['players']
             ids = [f'ID{id}' for id in BOids]
@@ -23,8 +22,7 @@ def generateLineups( gamePk=717417 ):
                 markdown += f"{player['person']['fullName']} - {player['position']['abbreviation']}|"
                 markdown += '|'.join( str(stats[stat]) for stat in ('avg', 'ops', 'homeRuns', 'rbi') )
                 markdown += '\n'
-        else:
-            print('No BOids for ' + team)
+
         markdown += '\n\n'
 
     return markdown
