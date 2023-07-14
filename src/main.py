@@ -310,6 +310,7 @@ class GDTBot:
             print('Pregame thread already posted')
             self.currentlyFeaturedThreadHandle = ft
             return
+        title = self.mg.generateTitle( self.currentGame, 'pre')
         body = self.mg.generatePreMarkdown( self.todaysGames )
         self.unfeatureThread( self.currentlyFeaturedThreadHandle )
         self.currentlyFeaturedThreadHandle = self.postThread( title, body )
