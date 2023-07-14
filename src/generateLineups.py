@@ -1,45 +1,32 @@
 import statsapi
 
 def generateLineups( gamePk=717417 ):
+    
     data = statsapi.boxscore_data(gamePk)
-    
-    homeBOids = data['home']['battingOrder']
-    #print(data['home']['team']['id'])
+    markdown = ""
 
-    markdown = "Name|avg.|OPS|HR|RBI\n"
-    markdown += ':--|' * 5
-    markdown += '\n'
-    
-    if homeBOids:
-        homePlayers = data['home']['players']
-        ids = [f'ID{id}' for id in homeBOids]
-        battingOrder = [homePlayers[id] for id in ids]
-
-        for p in battingOrder:
-            stats = p['seasonStats']['batting']
-            markdown += f"{p['person']['fullName']} - {p['position']['abbreviation']}|"
-            markdown += '|'.join( str(stats[stat]) for stat in ('avg', 'ops', 'homeRuns', 'rbi') )
+    for team in ("home", "away"):
+        
+        BOids = data[team]['battingOrder']
+        if BOids:
+            
+            markdown += "Name|avg.|OPS|HR|RBI\n"
+            markdown += ':--|' * 5
             markdown += '\n'
-    markdown += '\n\n'
+   
+            players = data[team]['players']
+            ids = [f'ID{id}' for id in BOids]
+            battingOrder = [players[id] for id in ids]
 
-    awayBOids = data['away']['battingOrder']
-    markdown += "Name|avg.|OPS|HR|RBI\n"
-    markdown += ':--|' * 5
-    markdown += '\n'
-    
-    if awayBOids:
-        awayPlayers = data['away']['players']
-        ids = [f'ID{id}' for id in awayBOids]
-        battingOrder = [awayPlayers[id] for id in ids]
+            for player in battingOrder:
+                stats = player['seasonStats']['batting']
+                markdown += f"{player['person']['fullName']} - {player['position']['abbreviation']}|"
+                markdown += '|'.join( str(stats[stat]) for stat in ('avg', 'ops', 'homeRuns', 'rbi') )
+                markdown += '\n'
+        else:
+            print('No BOids for ' + team)
+        markdown += '\n\n'
 
-        for p in battingOrder:
-            stats = p['seasonStats']['batting']
-            markdown += f"{p['person']['fullName']} - {p['position']['abbreviation']}|"
-            markdown += '|'.join( str(stats[stat]) for stat in ('avg', 'ops', 'homeRuns', 'rbi') )
-            markdown += '\n'
-    markdown += '\n\n'
-    
-    #print(markdown)
     return markdown
 
 
