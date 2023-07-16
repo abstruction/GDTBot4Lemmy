@@ -47,12 +47,13 @@ class Batter:
         self.id = id
 
     def __str__(self):
-        if self.name != "":
-            s = " "
-            if self.id != "":
-                s = "[" + str(self.name) + "](http://mlb.mlb.com/team/player.jsp?player_id=" + str(self.id) + ")"
-            else:
-                s = self.name
-            s = s + "|" + str(self.pos) + "|" + str(self.ab) + "|" + str(self.r) + "|" + str(self.h) + "|" + str(self.rbi) + "|" + str(self.bb) + "|" + str(self.so) + "|" + str(self.ba) + "/" + str(self.obp) + "/" + str(self.ops)
-            return s
-        return "|" * 9
+        if self.name == "":
+            return "|" * 9
+        s = ""
+        if self.id != "":
+            s = "[" + str(self.name) + "](http://mlb.mlb.com/team/player.jsp?player_id=" + str(self.id) + ")|"
+        else:
+            s = self.name + "|"
+        s += "|".join( str(stat) for stat in (self.pos, self.ab, self.r, self.h, self.rbi, self.bb, self.so) )
+        s += "|" + "/".join( str(stat) for stat in (self.ba, self.obp, self.ops) )
+        return s
