@@ -175,7 +175,7 @@ class GDTBot:
 
             elif self.state == BotState.waitingForGametime:
                 time.sleep( self.PREGAME_THREAD_UPDATE_PERIOD_SECONDS )
-                if datetime.now() > self.currentGame.startTime - timedelta(minutes=10):
+                if datetime.now() > self.currentGame.startTime - timedelta(minutes=60):
                     self.postGameThread()
                     self.changeState(BotState.duringGame)
                 else:
