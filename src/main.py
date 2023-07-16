@@ -245,7 +245,12 @@ class GDTBot:
 
 
     def updateGameData( self ):
-        response = urllib.request.urlopen(self.currentGame.liveFeedURL)
+        try:
+            response = urllib.request.urlopen(self.currentGame.liveFeedURL)
+        except Exception as e:
+            print(e)
+            print("Game data update from MLB API failed")
+            return
         self.currentGame.updateGameData( json.load(response) )
 
     def postThread( self, title, body, featured=True ):
