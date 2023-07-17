@@ -272,8 +272,9 @@ class GDTBot:
                 postSuccess = True
             except Exception as e:
                 print(e)
-                print(f"Failed to post or feature thread {title}\nTrying again in 20 seconds...\n")
-                time.sleep(20)
+                print(type(e))
+                print(f"Failed to post or feature thread {title}\nTrying again in 60 seconds...\n")
+                time.sleep(60)
 
         return sub
 
