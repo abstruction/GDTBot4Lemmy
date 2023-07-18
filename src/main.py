@@ -145,12 +145,28 @@ class GDTBot:
         if teamsGames:
             for gameURL, mediaURL in teamsGames:
                 print(f"{gameURL}")
-                response = urllib.request.urlopen(gameURL)
-                gameData = json.load(response)
-                response = urllib.request.urlopen(mediaURL)
-                mediaData = json.load(response)
+                success = False
+                while not success:
+                    try:
+                        response = urllib.request.urlopen(gameURL)
+                        gameData = json.load(response)
+                        success = True
+                    except:
+                        print("Failed to obtain game data from MLB API, trying again in 20 seconds...")
+                        time.sleep(20)
+                time.sleep(1)
+                success = False
+                while not success:
+                    try:
+                        response = urllib.request.urlopen(mediaURL)
+                        mediaData = json.load(response)
+                        success = True
+                    except:
+                        print('Failed to obtain media data from MLB API, trying again in 20 seconds...')
+                        time.sleep(20)
                 self.todaysGames.append( Game(gameData, mediaData, gameURL) )
                 if len(teamsGames) > 1: time.sleep(5)
+
             self.todaysGames.sort(key = lambda g: g.startTime)
             self.currentGame = self.todaysGames[0]
 
