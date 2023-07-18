@@ -578,12 +578,12 @@ class MarkdownGenerator:
             status += "## FINAL: "
             if int(homeTeamRuns) < int(awayTeamRuns):
                 status += awayTeamRuns + "-" + homeTeamRuns + " " + awayTeamName + "\n\n"
-                status += self.generateDecisions(data)
+                #status += self.generateDecisions(data)
                 #print("Returning status")
                 # return status
             elif int(homeTeamRuns) > int(awayTeamRuns):
                 status += homeTeamRuns + "-" + awayTeamRuns + " " + homeTeamName + "\n\n"
-                status += self.generateDecisions(data)
+                #status += self.generateDecisions(data)
                 #print("Returning status")
                 # return status
             elif int(homeTeamRuns) == int(awayTeamRuns):
