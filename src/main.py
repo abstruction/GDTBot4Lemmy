@@ -171,8 +171,8 @@ class GDTBot:
             self.currentGame = self.todaysGames[0]
 
 
-#event: ---4am-------self.PRE_THREAD_TIMEam--------game time----------game ends---
-#state:     w4pregame                      w4gametime       duringGame       w4tomorrow
+#event: ---4am-------self.PRE_THREAD_TIME--------game time - 60min----------game ends---
+#state:     w4pregame                    w4gametime               duringGame       w4tomorrow
 
     def mainLoop( self ):
 
