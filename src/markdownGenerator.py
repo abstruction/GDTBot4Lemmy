@@ -409,6 +409,9 @@ class MarkdownGenerator:
 
         lineInfo = data["liveData"]["linescore"]
         inningsInfo = data["liveData"]["linescore"]["innings"]
+        if "currentInning" not in lineInfo:
+            return ""
+        
         numInnings = lineInfo["currentInning"] if lineInfo["currentInning"] > 9 else 9
 
        # Table headers
