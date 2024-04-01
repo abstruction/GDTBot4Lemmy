@@ -572,13 +572,14 @@ class MarkdownGenerator:
         # try:
         gameStatus = data["gameData"]["status"]["abstractGameState"]
         linescore = data["liveData"]["linescore"]
-        homeTeamRuns = str(linescore["teams"]["home"]["runs"])
-        awayTeamRuns = str(linescore["teams"]["away"]["runs"])
+
         homeTeamName = data["gameData"]["teams"]["home"]["abbreviation"]
         awayTeamName = data["gameData"]["teams"]["away"]["abbreviation"]
 
         if gameStatus in ("Game Over", "Final"):
             status += "## FINAL: "
+            homeTeamRuns = str(linescore["teams"]["home"]["runs"])
+            awayTeamRuns = str(linescore["teams"]["away"]["runs"])            
             if int(homeTeamRuns) < int(awayTeamRuns):
                 status += awayTeamRuns + "-" + homeTeamRuns + " " + awayTeamName + "\n\n"
                 #status += self.generateDecisions(data)
@@ -596,6 +597,8 @@ class MarkdownGenerator:
             
         elif gameStatus == "Completed Early":
             status += "## COMPLETED EARLY: "
+            homeTeamRuns = str(linescore["teams"]["home"]["runs"])
+            awayTeamRuns = str(linescore["teams"]["away"]["runs"])            
             if int(homeTeamRuns) < int(awayTeamRuns):
                 status += awayTeamRuns + "-" + homeTeamRuns + " " + awayTeamName + "\n\n"
                 status += self.generateDecisions(data)
