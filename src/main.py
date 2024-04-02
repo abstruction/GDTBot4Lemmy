@@ -6,7 +6,9 @@ import time
 from datetime import datetime, timedelta
 import urllib.request, urllib.error, urllib.parse
 import simplejson as json
-import jplaw
+#import jplaw
+from pythorhead import Lemmy
+from pythorhead import types
 import os
 
 import markdownGenerator
@@ -57,13 +59,14 @@ class GDTBot:
         self.mg = markdownGenerator.MarkdownGenerator( division_code=self.DIVISION_CODE )        
         
         try:
-            self.lem = jplaw.Lemmy(self.LEMMY_INSTANCE, self.CLIENT_ID, self.CLIENT_SECRET)
+            self.lem = Lemmy(self.LEMMY_INSTANCE)
+            login = self.lem.log_in( self.CLIENT_ID, self.CLIENT_SECRET )
         except Exception as e:
             print(e)
             print(f"Failed to log in to {self.LEMMY_INSTANCE}")
             return
         try:
-            self.community_id = self.lem.Community.get(self.SUBREDDIT)['community']['id']
+            self.community_id = self.lem.discover_community(self.SUBREDDIT)
         except Exception as e:
             print(e)
             print(f'Failed to obtain community id for {self.SUBREDDIT}')
@@ -271,7 +274,7 @@ class GDTBot:
 
     def postThread( self, title, body, featured=True ):
         try:
-            posts = self.lem.Post.list(community_id=self.community_id)
+            posts = self.lem.post.list(community_id=self.community_id)
         except:
             posts = []
         for post in posts:
@@ -282,8 +285,8 @@ class GDTBot:
         postSuccess = False
         while not postSuccess:
             try:
-                sub = self.lem.Post.create(community_id=self.community_id, title=title, body=body)
-                self.lem.Post.feature(post_id=sub['post']['id'], featured=featured, feature_type=jplaw.types.PostFeatureType.Community )
+                submission = self.lem.post.create(community_id=self.community_id, name=title, body=body)
+                self.lem.Post.feature(post_id=submission['post']['id'], feature=featured, feature_type=types.PostFeatureType.Community )
                 print(f"Posted thread\n{title}")
                 postSuccess = True
             except Exception as e:
@@ -292,7 +295,7 @@ class GDTBot:
                 print(f"Failed to post or feature thread {title}\nTrying again in 60 seconds...\n")
                 time.sleep(60)
 
-        return sub
+        return submission
 
 
     def updateThread( self, handle, body ):
@@ -300,7 +303,7 @@ class GDTBot:
             handle = self.getHandleOnFeaturedThread()
         if handle:
             try:
-                self.lem.Post.edit(post_id = handle['post']['id'], body=body)
+                self.lem.post.edit(post_id = handle['post']['id'], body=body)
             except:
                 print("Failed to update thread, try again on next iteration")
         else:
@@ -310,13 +313,15 @@ class GDTBot:
         # check, just in case the bot is restarted and it doesn't have the handle
         if handle:
             try:
-                self.lem.Post.feature(post_id=handle['post']['id'], featured=False, feature_type=jplaw.types.PostFeatureType.Community )
-            except:
+                self.lem.post.feature(post_id=handle['post']['id'], feature=False, feature_type=types.FeatureType.Community )
+            except Exception as e:
+                print(e)
                 print(f'Failed to unfeature thread {handle["post"]["name"]}')
 
     def getHandleOnFeaturedThread( self ):
+        
         try:
-            posts = self.lem.Post.list(community_id=self.community_id)
+            posts = self.lem.post.list(community_id=self.community_id)
         except:
             return None
             
