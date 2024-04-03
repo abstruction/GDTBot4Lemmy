@@ -285,8 +285,8 @@ class GDTBot:
         postSuccess = False
         while not postSuccess:
             try:
-                submission = self.lem.post.create(community_id=self.community_id, name=title, body=body)
-                self.lem.Post.feature(post_id=submission['post']['id'], feature=featured, feature_type=types.PostFeatureType.Community )
+                submission = self.lem.post.create(community_id=self.community_id, name=title, body=body)['post_view']
+                self.lem.post.feature(post_id=submission['post']['id'], feature=featured, feature_type=types.FeatureType.Community )
                 print(f"Posted thread\n{title}")
                 postSuccess = True
             except Exception as e:
