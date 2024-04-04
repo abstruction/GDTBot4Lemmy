@@ -285,8 +285,8 @@ class GDTBot:
         postSuccess = False
         while not postSuccess:
             try:
-                submission = self.lem.post.create(community_id=self.community_id, name=title, body=body)['post_view']
-                self.lem.post.feature(post_id=submission['post']['id'], feature=featured, feature_type=types.FeatureType.Community )
+                handle = self.lem.post.create(community_id=self.community_id, name=title, body=body)['post_view']
+                self.lem.post.feature(post_id=handle['post']['id'], feature=featured, feature_type=types.FeatureType.Community )
                 print(f"Posted thread\n{title}")
                 postSuccess = True
             except Exception as e:
@@ -295,7 +295,7 @@ class GDTBot:
                 print(f"Failed to post or feature thread {title}\nTrying again in 60 seconds...\n")
                 time.sleep(60)
 
-        return submission
+        return handle
 
 
     def updateThread( self, handle, body ):
