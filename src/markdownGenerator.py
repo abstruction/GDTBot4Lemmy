@@ -234,8 +234,19 @@ class MarkdownGenerator:
         weather = gameData["weather"]
         # print(weather.keys())
         #teams = gameData["teams"]
-        videoBroadcast = mediaData["media"]["epg"][0]
-        audioBroadcast = mediaData["media"]["epg"][2]
+        videoBroadcast = '??'
+        audioBroadcast = '??'
+        # try:
+        #     print("mediaData.media:")
+        #     print(mediaData["media"])
+        #     videoBroadcast = mediaData["media"]["epg"][0]
+        #     audioBroadcast = mediaData["media"]["epg"][2]
+        # except:
+        #     print('~~~EXCEPTION~~~')
+        #     print(mediaData["media"].keys())
+        #     print(mediaData["media"]['featuredMedia'])
+        #     videoBroadcast = '--'
+        #     audioBroadcast = '--'
 
         #print('floof')
         # Get time data
@@ -261,23 +272,29 @@ class MarkdownGenerator:
         else:
             header += "|**Weather:** " + f"|[Statcast Game Preview](https://baseballsavant.mlb.com/preview?game_pk={gameData['game']['pk']})\n"
 
-        header += "|**TV:** "
-        video = False
-        for item in videoBroadcast["items"]:
-            if item["callLetters"]:
-                header += item["callLetters"] + ", "
-                video = True
-        if video:
-            header = header[:-2]
 
-        header += "  **Radio:** "
-        audio = False
-        for item in audioBroadcast["items"]:
-            if item["callLetters"]:
-                header += item["callLetters"] + ", "
-                audio = True
-        if audio:
-            header = header[:-2]
+
+        # # Cut out until I can get it working again
+        # header += "|**TV:** "
+        # video = False
+        # for item in videoBroadcast["items"]:
+        #     if item["callLetters"]:
+        #         header += item["callLetters"] + ", "
+        #         video = True
+        # if video:
+        #     header = header[:-2]
+        #
+        # header += "  **Radio:** "
+        # audio = False
+        # for item in audioBroadcast["items"]:
+        #     if item["callLetters"]:
+        #         header += item["callLetters"] + ", "
+        #         audio = True
+        # if audio:
+        #     header = header[:-2]
+
+
+
         header += "|\n\n"
         #print("Returning header")
         return header
