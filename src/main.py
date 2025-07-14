@@ -29,10 +29,17 @@ class Game:
             self.startTime = datetime.strptime(timeString, "%Y-%m-%d %I:%M %p")
 
     def isFinished( self ):
-        return "Final" in self.gameData['gameData']['status']['abstractGameState']
+        return "Final" in self.gameData['gameData']['status']['abstractGameState'] \
+            or "uspended" in self.gameData['gameData']['status']['detailedState']
 
     def updateGameData( self, gameData ):
+        #s = gameData['gameData']['status']
+        #for k, v in s.items():
+        #    print( f'{k} : {v}')
         self.gameData = gameData
+        
+    def getGameStatus( self ):
+        return self.gameData['gameData']['status']['detailedState']
         
 
 class BotState:
@@ -181,7 +188,16 @@ class GDTBot:
 
         while True:
     
+            status = self.currentGame.getGameStatus() if self.currentGame else "Off Day"
+            #if status != 'Scheduled':
+            #    print( f'Game status per API: {status}' )
             if self.state == BotState.waitingForPregame:
+                self.updateGameData()
+                if 'Delayed' in self.currentGame.getGameStatus():
+                    print("CURRENT GAME IS DELAYED (will be played some other day)")
+                    self.changeState(BotState.waitingForTomorrow)
+                    continue
+                    
                 time.sleep(60)
                 if datetime.now() > self.pregameTime:
                     self.getTodaysGames()
@@ -193,12 +209,19 @@ class GDTBot:
                         self.changeState(BotState.waitingForTomorrow)
 
             elif self.state == BotState.waitingForGametime:
+                self.updateGameData()
+                if 'Delayed' in self.currentGame.getGameStatus():
+                    print("CURRENT GAME IS DELAYED (will be played some other day)")
+                    #self.postPostgameThread()
+                    self.changeState(BotState.waitingForTomorrow)
+                    continue
+                    
                 time.sleep( self.PREGAME_THREAD_UPDATE_PERIOD_SECONDS )
                 if datetime.now() > self.currentGame.startTime - timedelta(minutes=60):
                     self.postGameThread()
                     self.changeState(BotState.duringGame)
                 else:
-                    self.updateGameData()
+                    #self.updateGameData()
                     self.updatePregameThread()
 
             elif self.state == BotState.duringGame:
@@ -210,8 +233,14 @@ class GDTBot:
                         self.changeState(BotState.waitingForTomorrow)
                     else:
                         #sort out doubleheadders THIS IS UNTESTED AS OF v.5.0
+                        # It's tested now and it tries to reuse the existing game thread
                         self.currentGame = self.todaysGames[1]
                         self.todaysGames = [self.currentGame]
+                        # Attempted patch: unfeature the game thread so PostGameThread
+                        # won't see the dupe
+                        ft = self.getHandleOnFeaturedThread()
+                        if ft:
+                            self.unfeatureThread(ft)
                         self.postGameThread()
                         self.changeState(BotState.duringGame)
                 else:
@@ -271,6 +300,9 @@ class GDTBot:
             print("Game data update from MLB API failed")
             return
         self.currentGame.updateGameData( json.load(response) )
+        
+    # def getGameStattus( self ):
+    #     return self.currentGame.gameData['gameData']['status']['detailedState']
 
     def postThread( self, title, body, featured=True ):
         try:
@@ -285,8 +317,9 @@ class GDTBot:
         postSuccess = False
         while not postSuccess:
             try:
-                submission = self.lem.post.create(community_id=self.community_id, name=title, body=body)
-                self.lem.Post.feature(post_id=submission['post']['id'], feature=featured, feature_type=types.PostFeatureType.Community )
+                submission = self.lem.post.create(community_id=self.community_id, name=title, body=body)['post_view']
+                #print(submission['post_view'].keys())
+                self.lem.post.feature(post_id=submission['post']['id'], feature=featured, feature_type=types.FeatureType.Community )
                 print(f"Posted thread\n{title}")
                 postSuccess = True
             except Exception as e:
