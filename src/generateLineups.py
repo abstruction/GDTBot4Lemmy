@@ -1,4 +1,4 @@
-import statsapi
+import statsapi #pip install MLB-StatsAPI
 
 def generateLineups( gamePk ):
     
